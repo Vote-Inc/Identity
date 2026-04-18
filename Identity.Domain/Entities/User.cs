@@ -18,6 +18,17 @@ public sealed class User : Entity, IAggregateRoot
         };
     }
 
+    public static User Reconstitute(Guid id, Email email, DateTime? lastLoginAt)
+    {
+        return new User
+        {
+            Id = id,
+            Email = email,
+            PasswordHash = string.Empty,
+            LastLoginAt = lastLoginAt
+        };
+    }
+
     public void RecordLogin()
     {
         LastLoginAt = DateTime.UtcNow;
