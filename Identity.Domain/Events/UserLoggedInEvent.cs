@@ -1,15 +1,11 @@
 namespace Identity.Domain.Events;
 
-public class UserLoggedInEvent
-    : INotification
+public sealed record UserLoggedInEvent : INotification
 {
-    public User User { get; private set; }
-    public DateTime OccurredAt { get; private set;}
+    public Guid UserId { get; private set; }
 
-
-    public UserLoggedInEvent(User user, DateTime occuredAt)
+    public UserLoggedInEvent(Guid userId)
     {
-        User = user;
-        OccurredAt = occuredAt;
+        UserId = userId;
     }
-}
+};

@@ -4,12 +4,9 @@ public class UserLogInFailedEvent
     : INotification
 {
     public string Email { get; private set; }
-    public DateTime OccurredAt { get; private set; }
 
-
-    public UserLogInFailedEvent(string email, DateTime occuredAt)
+    public UserLogInFailedEvent(string email)
     {
         Email = email;
-        OccurredAt = occuredAt;
     }
 }

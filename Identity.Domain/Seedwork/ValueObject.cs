@@ -18,7 +18,7 @@ public abstract class ValueObject
 
     protected abstract IEnumerable<object> GetEqualityComponents();
 
-    public override bool Equals(object obj)
+    public override bool Equals(object? obj)
     {
         if (obj == null || obj.GetType() != GetType())
         {
@@ -33,12 +33,12 @@ public abstract class ValueObject
     public override int GetHashCode()
     {
         return GetEqualityComponents()
-            .Select(x => x != null ? x.GetHashCode() : 0)
+            .Select(x => x.GetHashCode())
             .Aggregate((x, y) => x ^ y);
     }
 
-    public ValueObject GetCopy()
+    public ValueObject? GetCopy()
     {
-        return this.MemberwiseClone() as ValueObject;
+        return MemberwiseClone() as ValueObject;
     }
 }

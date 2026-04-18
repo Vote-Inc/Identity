@@ -3,8 +3,8 @@ namespace Identity.Domain.Seedwork;
 public abstract class Entity
 {
     int? _requestedHashCode;
-    int _Id;
-    public virtual int Id
+    Guid _Id;
+    public virtual Guid Id
     {
         get
         {
@@ -40,7 +40,7 @@ public abstract class Entity
         return this.Id == default;
     }
 
-    public override bool Equals(object obj)
+    public override bool Equals(object? obj)
     {
         if (obj == null || !(obj is Entity))
             return false;
@@ -64,15 +64,14 @@ public abstract class Entity
         if (!IsTransient())
         {
             if (!_requestedHashCode.HasValue)
-                _requestedHashCode = this.Id.GetHashCode() ^ 31;
-            
+                _requestedHashCode = this.Id.GetHashCode() ^ 31; // XOR for random distribution (http://blogs.msdn.com/b/ericlippert/archive/2011/02/28/guidelines-and-rules-for-gethashcode.aspx)
+
             return _requestedHashCode.Value;
         }
         else
             return base.GetHashCode();
 
     }
-
     public static bool operator ==(Entity left, Entity right)
     {
         if (Object.Equals(left, null))

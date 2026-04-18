@@ -1,6 +1,9 @@
-global using System.Reflection;
-global using Identity.Domain.Exceptions;
-global using MediatR;
-global using Identity.Domain.AggregatesModel.UserAggregate;
+global using Identity.Domain.Entities;
 global using Identity.Domain.Events;
+global using Identity.Domain.Exceptions;
+global using Identity.Domain.Repositories;
 global using Identity.Domain.Seedwork;
+global using Identity.Domain.SeedWork;
+global using Identity.Domain.Services;
+global using Identity.Domain.ValueObjects;
+global using MediatR;
