@@ -66,7 +66,6 @@ public sealed class CognitoService(
         }
         catch (NotAuthorizedException)
         {
-            // Token already expired or revoked — treat as success
             return Result.Success();
         }
     }
