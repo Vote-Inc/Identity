@@ -1,0 +1,9 @@
+global using Identity.API.Extensions;
+global using Identity.API.Requests;
+global using Identity.Application.Auth.Commands.Login;
+global using Identity.Application.Auth.Commands.Logout;
+global using Identity.Domain.Seedwork;
+global using Identity.Infrastructure;
+global using Microsoft.AspNetCore.Authentication.JwtBearer;
+global using Microsoft.AspNetCore.Authorization;
+global using Microsoft.AspNetCore.Mvc;
