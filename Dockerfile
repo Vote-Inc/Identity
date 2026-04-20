@@ -9,8 +9,12 @@ COPY Identity.API/Identity.API.csproj Identity.API/
 RUN dotnet restore Identity.API/Identity.API.csproj
 
 COPY . .
-RUN dotnet publish Identity.API/Identity.API.csproj -c Release -o /app/publish
 
+RUN dotnet publish Identity.API/Identity.API.csproj \
+-c Release \
+-o /app/publish \
+--no-restore
+    
 FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS runtime
 WORKDIR /app
 
