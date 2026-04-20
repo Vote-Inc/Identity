@@ -9,6 +9,8 @@ builder.Services.AddInfrastructure(builder.Configuration);
 builder.Services.AddScoped<LoginCommandHandler>();
 builder.Services.AddScoped<LogoutCommandHandler>();
 
+builder.Services.AddHealthChecks();
+
 var cognitoSettings = builder.Configuration.GetSection("Cognito");
 var region = cognitoSettings["Region"];
 var userPoolId = cognitoSettings["UserPoolId"];
@@ -32,6 +34,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+app.UseHealthChecks("/health");
 
 app.UseHttpsRedirection();
 app.UseAuthentication();
