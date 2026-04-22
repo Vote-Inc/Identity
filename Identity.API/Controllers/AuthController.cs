@@ -32,6 +32,9 @@ public sealed class AuthController(
             .ToString()
             .Replace("Bearer ", string.Empty);
 
+        if (string.IsNullOrWhiteSpace(token))
+            return NoContent();
+
         var result = await logoutCommandHandler.Handle(new LogoutCommand(token), ct);
 
         return result.Match<IActionResult>(
@@ -48,6 +51,8 @@ public sealed class AuthController(
 
         if (string.IsNullOrEmpty(token))
             return Unauthorized();
+
+        Response.Headers["Cache-Control"] = "no-store";
 
         var result = await validateTokenQueryHandler.Handle(new ValidateTokenQuery(token), ct);
 
