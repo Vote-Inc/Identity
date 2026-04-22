@@ -15,7 +15,7 @@ public sealed class AuthController(
             new LoginCommand(request.Email, request.Password), ct);
 
         return result.Match<IActionResult>(
-            onSuccess: tokens => Ok(new { token = tokens.AccessToken, expiresIn = tokens.ExpiresIn }),
+            onSuccess: tokens => Ok(new { token = tokens.IdToken, expiresIn = tokens.ExpiresIn }),
             onFailure: error => error.Code switch
             {
                 "identity.credentials.invalid"  => Unauthorized(error.ToResponse()),
