@@ -32,12 +32,11 @@ var region = cognitoSettings["Region"];
 var userPoolId = cognitoSettings["UserPoolId"];
 var clientId = cognitoSettings["ClientId"];
 
-JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
-
 builder.Services
     .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
+        options.MapInboundClaims = false;
         options.Authority = $"https://cognito-idp.{region}.amazonaws.com/{userPoolId}";
         options.Audience = clientId;
         options.TokenValidationParameters.ValidateLifetime = true;
