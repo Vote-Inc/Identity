@@ -53,7 +53,6 @@ if (app.Environment.IsDevelopment())
 
 app.UseHealthChecks("/health");
 
-app.UseHttpsRedirection();
 app.UseCors("AllowFrontend");
 app.UseAuthentication();
 app.UseAuthorization();
