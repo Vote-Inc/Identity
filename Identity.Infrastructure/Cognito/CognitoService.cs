@@ -52,6 +52,35 @@ public sealed class CognitoService(
         }
     }
 
+    public async Task<Result<ValidatedUser>> ValidateAccessTokenAsync(
+        string accessToken,
+        CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            var userResponse = await cognitoClient.GetUserAsync(
+                new GetUserRequest { AccessToken = accessToken }, cancellationToken);
+
+            var sub = userResponse.UserAttributes
+                .FirstOrDefault(a => a.Name == "sub")?.Value ?? userResponse.Username;
+
+            var groupsResponse = await cognitoClient.AdminListGroupsForUserAsync(
+                new AdminListGroupsForUserRequest
+                {
+                    UserPoolId = _settings.UserPoolId,
+                    Username   = userResponse.Username
+                }, cancellationToken);
+
+            var role = groupsResponse.Groups.FirstOrDefault()?.GroupName;
+
+            return Result<ValidatedUser>.Success(new ValidatedUser(sub, role));
+        }
+        catch (NotAuthorizedException)
+        {
+            return Result<ValidatedUser>.Failure(Error.Unauthorized);
+        }
+    }
+
     public async Task<Result> SignOutAsync(
         string accessToken,
         CancellationToken cancellationToken = default)

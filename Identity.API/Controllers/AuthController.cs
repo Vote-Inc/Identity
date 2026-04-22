@@ -4,7 +4,8 @@ namespace Identity.API.Controllers;
 [Route("api/auth")]
 public sealed class AuthController(
     LoginCommandHandler loginCommandHandler,
-    LogoutCommandHandler logoutCommandHandler) : ControllerBase
+    LogoutCommandHandler logoutCommandHandler,
+    ValidateTokenQueryHandler validateTokenQueryHandler) : ControllerBase
 {
     [HttpPost("login")]
     public async Task<IActionResult> Login(
@@ -15,7 +16,7 @@ public sealed class AuthController(
             new LoginCommand(request.Email, request.Password), ct);
 
         return result.Match<IActionResult>(
-            onSuccess: tokens => Ok(new { token = tokens.IdToken, expiresIn = tokens.ExpiresIn }),
+            onSuccess: tokens => Ok(new { token = tokens.AccessToken, expiresIn = tokens.ExpiresIn }),
             onFailure: error => error.Code switch
             {
                 "identity.credentials.invalid"  => Unauthorized(error.ToResponse()),
@@ -24,7 +25,6 @@ public sealed class AuthController(
             });
     }
 
-    [Authorize]
     [HttpPost("logout")]
     public async Task<IActionResult> Logout(CancellationToken ct)
     {
@@ -39,21 +39,29 @@ public sealed class AuthController(
             onFailure: error => BadRequest(error.ToResponse()));
     }
 
-    [Authorize]
     [HttpGet("validate")]
-    public IActionResult Validate()
+    public async Task<IActionResult> Validate(CancellationToken ct)
     {
-        var voterId = User.FindFirst("sub")?.Value;
-        var voterRole = User.FindFirst("cognito:groups")?.Value;
+        var token = HttpContext.Request.Headers.Authorization
+            .ToString()
+            .Replace("Bearer ", string.Empty);
 
-        if (string.IsNullOrEmpty(voterId))
+        if (string.IsNullOrEmpty(token))
             return Unauthorized();
 
-        Response.Headers["X-Voter-Id"] = voterId;
+        var result = await validateTokenQueryHandler.Handle(new ValidateTokenQuery(token), ct);
 
-        if (!string.IsNullOrEmpty(voterRole))
-            Response.Headers["X-Voter-Role"] = voterRole;
+        return result.Match<IActionResult>(
+            onSuccess: user =>
+            {
+                Response.Headers["X-Voter-Id"] = user.Sub;
 
-        return Ok();
+                if (!string.IsNullOrEmpty(user.Role))
+                    Response.Headers["X-Voter-Role"] = user.Role;
+
+                return Ok();
+            },
+            onFailure: _ => Unauthorized()
+        );
     }
 }
