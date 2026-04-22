@@ -32,6 +32,8 @@ var region = cognitoSettings["Region"];
 var userPoolId = cognitoSettings["UserPoolId"];
 var clientId = cognitoSettings["ClientId"];
 
+JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
+
 builder.Services
     .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
